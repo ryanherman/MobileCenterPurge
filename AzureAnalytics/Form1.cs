@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -101,11 +102,19 @@ namespace AzureAnalytics
             client.DefaultRequestHeaders.Add("X-API-Token", APIKey);
             foreach (var eachItem in listBox1.Items)
             {
-             
-                var endpoint = "/v0.1/apps/" + Owner + "/" + AppNames[Apps.SelectedIndex] + "/analytics/events/" + HttpUtility.UrlEncode(eachItem.ToString());
-                var response = await client.DeleteAsync(endpoint);
-                var projectsJson = response.Content.ReadAsStringAsync().Result;
-                ServerResponse.Items.Add(response.StatusCode + " - " + projectsJson);
+                try
+                {
+                        var endpoint = "/v0.1/apps/" + Owner + "/" + AppNames[Apps.SelectedIndex] + "/analytics/events/" +
+                                       HttpUtility.UrlEncode(eachItem.ToString()).Replace("+", "%20");
+                        var response = await client.DeleteAsync(endpoint);
+                        var projectsJson = response.Content.ReadAsStringAsync().Result;
+                        ServerResponse.Items.Add(endpoint);
+                        ServerResponse.Items.Add(response.StatusCode + " - " + projectsJson);
+                }
+                catch
+                {
+                    Console.WriteLine("error");
+                }
             }
 
             listBox1.Items.Clear();

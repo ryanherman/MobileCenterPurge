@@ -1,5 +1,7 @@
 ﻿namespace AzureAnalytics.Models
 {
+
+
     public class Events
     {
 
